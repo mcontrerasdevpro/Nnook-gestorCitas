@@ -1,3 +1,4 @@
+import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from flask import Flask, request, jsonify
@@ -9,7 +10,9 @@ CORS(app, resources={r"/api/*": {"origins": "*"}},
      allow_headers=["Content-Type", "Authorization"],
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
-DATABASE_URL = "postgresql://postgres:26035618@localhost:5433/nnook_db"
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("Falta la variable de entorno DATABASE_URL (ver backend/.env.example)")
 
 def get_db_connection():
     return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
